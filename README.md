@@ -1,41 +1,122 @@
-# Java Reachability Playground Modified By ASecurityGuru for AWS DevSecOps
-
-This is an intentionally vulnerable application. It was purposely designed to demonstrate the capabilities of Snyk's Reachable
-Vulnerabilities feature and includes both a "Reachable" vulnerability (with a direct data flow to the vulnerable function) and a "Potentially Reachable" vulnerability (where only partial data exists for determining reachability).
+## AWS SECURITY
 
 
-## Included vulnerabilities
-### [Arbitrary File Write via Archive Extraction](https://app.snyk.io/vuln/SNYK-JAVA-ORGND4J-72550)
-An exploit is using a vulnerability called [ZipSlip](https://snyk.io/research/zip-slip-vulnerability) - a critical vulnerability discovered 
-by Snyk, which typically results in remote command execution. As part of the exploit, a special zip archive is 
-crafted (attached as `malicious_file.zip`). When this file is extracted by a vulnerable function, it will create a file 
-called `good.txt` in the folder `unzipped`, but it will also create a file called `evil.txt` in the `/tmp/` folder. 
-This example is not dangerous, of course, but demonstrates the risk the vulnerability poses - imagine overwriting `.ssh/authorized_keys` or another sensitive file.
 
-### [Deserialization of Untrusted Data](https://app.snyk.io/vuln/SNYK-JAVA-COMMONSCOLLECTIONS-472711)
-This vulnerability is not exploited. It demonstrates potentially vulnerable code, for which data about vulnerable functions
-is not available.
 
-## How to run the demo (Maven)
-1. Checkout this repository (`git checkout git@github.com:snyk/java-reachability-playground.git`)
-2. Install all the dependencies (`mvn install`)
-3. Compile the project (`mvn compile`)
-4. Run the main class (`mvn exec:java -Dexec.mainClass=Unzipper`); the application should throw an exception saying `Malicious file /tmp/evil.txt was created`.
-5. Run snyk command with Reachable Vulnerabilities flag (`snyk test --reachable` or `snyk monitor --reachable`); you should see the vulnerability `SNYK-JAVA-ORGND4J-72550` marked as reachable
-and the function call path to the vulnerability
 
-## For Gradle 
-1. Make sure you build the artifacts with `./gradlew build`
-2. To see test results run `snyk test --file=build.gradle --reachable` or monitor: `snyk monitor --file=build.gradle --reachable`
----
 
-*Note: Once the java application is run, `malicious_file.zip` will be deleted by it. To run it again, run `git checkout .` prior
-to next java run.*
 
-## Screenshots
 
-### CLI
-![Snyk CLI Reachable Vulnerabilities](CLI_reachable.png)
+Introduction
 
-### Snyk UI
-![Snyk UI Reachable Vulnerabilities](UI_reachable.png)
+
+Security Termrs 
+
+
+
+Tools
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Step: 2 -  Adding Security to AWS Pipepline
+   
+   1. Integrate SonarCloud with AWS CodeCommit and CodeBuild ( SAST Scan )
+        Create SonarCloud account
+        Set up AWS Secret manager and store Sonarcloud Tokens
+
+
+            Update buildspec.yml file
+                  env:
+                secrets-manager:
+                  TOKEN: firstSecret:tokenForSonar
+            phases:
+              build:
+                commands:
+                  - mvn verify sonar:sonar -Dsonar.projectKey=javaprojectaws -Dsonar.organization=javaprojectaws -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$TOKEN 
+                  - sleep 5
+                  - |- 
+                    quality_status=$(curl -s -u $TOKEN: https://sonarcloud.io/api/qualitygates/project_status?projectKey=javaprojectaws | jq -r '.projectStatus.status')
+                    echo "SonarCloud analysistatus is $quality_status"; 
+                    if [ $quality_status = "ERROR" ] ; then exit 1;fi
+              
+      
+![image](https://github.com/iamdeborah-Q/AWS-Cloud-DevSecOps-Project/assets/122198373/60c7de3f-36e3-4a2d-8024-cd7f948278e8)
+![image](https://github.com/iamdeborah-Q/AWS-Cloud-DevSecOps-Project/assets/122198373/532dccb9-35a6-4da3-9812-af2174deb91e)
+![image](https://github.com/iamdeborah-Q/AWS-Cloud-DevSecOps-Project/assets/122198373/e4cceb89-9961-4411-aeb9-1533d3275624)
+
+
+
+
+
+
+   2. Integrate Snyk with AWS CodeCommit and CodeBuild (SCA Scan)
+
+     Run Software Compostion Analysis using Snyk
+
+
+
+      ![image](https://github.com/iamdeborah-Q/AWS-Cloud-DevSecOps-Project/assets/122198373/29cd404f-70f4-49fe-a56e-11282213dd2f)
+
+
+
+  3. Integrate OWASP ZAP with AWS CodeCommit and CodeBuild (DAST Scan)
+     Run Dynamic Application Securit Testing using OWASP ZAP
+     Create Amazon S3 Bucket for Artifacts
+
+     ![image](https://github.com/iamdeborah-Q/AWS-Cloud-DevSecOps-Project/assets/122198373/ba51f61f-ac35-4b5f-8f42-85a4b64d0504)
+
+
+
+      
+
+
+# Step: 3 - End-to-End DevSecOps Pipepline
+  Write a code to intergrate security into AWS Code pipeline
+
+  ![image](https://github.com/iamdeborah-Q/AWS-Cloud-DevSecOps-Project/assets/122198373/d6c8ad13-fd3b-410a-877a-4105188e3fa1)
+
+
+
+
+
+# Step : 4 - Create JIRA Account to Report Security Issues 
+
+
+![image](https://github.com/iamdeborah-Q/AWS-Cloud-DevSecOps-Project/assets/122198373/86967eac-06fa-4622-9a62-36a625567b5b)
+
+ Below consist of all analysis on JIRA
+
+ ![image](https://github.com/iamdeborah-Q/AWS-Cloud-DevSecOps-Project/assets/122198373/056f426a-517c-45bf-b544-4df3843ab663)
+
+
+
+
+## AWS Security Compliance 
+
+Implement AWS Security Hub withion our infracture
+  set up AWS Config and enable confliance rule
+
+
+![image](https://github.com/iamdeborah-Q/AWS-Cloud-DevSecOps-Project/assets/122198373/6b97c732-45c7-466a-93e9-bc5c49e790ac)
+
+
+AWS Inspector 
+
+Activate 
+intergrate EC2 
+
+        1) Create an EC2 instance and enable port http:80 in the security group
+        2) SSM agent should be installed on EC2 instance 
+        3) SSM agent should be running on EC2 instance
