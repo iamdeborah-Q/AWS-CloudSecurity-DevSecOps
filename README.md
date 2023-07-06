@@ -11,6 +11,18 @@ Security Termrs
 
 
 Tools
+CI/CD services
+For CI/CD, I use the following AWS services:
+
+  AWS CodeBuild — A fully managed continuous integration service that compiles source code, runs tests, and produces software packages that are ready to deploy.
+  
+  AWS CodeCommit — A fully managed source control service that hosts secure Git-based repositories.
+  
+  AWS CodeDeploy — A fully managed deployment service that automates software deployments to a variety of compute services such as Amazon Elastic Compute Cloud (Amazon EC2), AWS Fargate, AWS Lambda,    
+                    and your on-premises servers.
+                    
+  AWS CodePipeline — A fully managed continuous delivery service that helps you automate your release pipelines for fast and reliable application and infrastructure updates.
+  
 
 
 
@@ -26,7 +38,7 @@ Tools
 
 
 
-# Step: 2 -  Adding Security to AWS Pipepline
+# Step: 2   AWS Pipepline
    
    1. Integrate SonarCloud with AWS CodeCommit and CodeBuild ( SAST Scan )
         Create SonarCloud account
